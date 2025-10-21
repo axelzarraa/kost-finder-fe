@@ -21,7 +21,8 @@
     "react-dom": "19.1.0",
     "react-hook-form": "^7.65.0",
     "react-hot-toast": "^2.6.0",
-    "react-query-devtools": "^2.6.3"
+    "react-query-devtools": "^2.6.3",
+    "yup": "^1.7.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
