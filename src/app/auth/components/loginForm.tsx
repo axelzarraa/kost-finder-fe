@@ -21,7 +21,7 @@ const LoginForm = () => {
             const response = await loginMutation.mutateAsync(data);
             localStorage.setItem('token', response.token);
             showSuccess('Login successful!');
-            router.push('/kos');
+            router.push('/society/kos');
         } catch (error) {
             console.error('Login failed:', error);
             showError('Login failed. Please check your credentials.');
