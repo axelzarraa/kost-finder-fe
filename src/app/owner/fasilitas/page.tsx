@@ -13,6 +13,8 @@ export default function FasilitasPage() {
   const [facilities, setFacilities] = useState<Facility[]>([]);
   const [kosId, setKosId] = useState('');
   const [newFacility, setNewFacility] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
@@ -22,8 +24,8 @@ export default function FasilitasPage() {
         headers: { Authorization: `Bearer ${token}` },
       });
       setFacilities(res.data);
-    } catch (err) {
-      console.error('Gagal mengambil data fasilitas');
+    } catch {
+      setError('Gagal mengambil data fasilitas.');
     }
   };
 
@@ -32,16 +34,22 @@ export default function FasilitasPage() {
   }, []);
 
   const handleAdd = async () => {
+    if (!kosId || !newFacility) {
+      setError('Mohon isi semua kolom.');
+      return;
+    }
     try {
       await axios.post(
         'https://api-kamu.com/owner/fasilitas',
         { kos_id: kosId, fasility: newFacility },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      setSuccess('Fasilitas berhasil ditambahkan!');
+      setError('');
       setNewFacility('');
       fetchFacilities();
-    } catch (err) {
-      console.error('Gagal menambahkan fasilitas');
+    } catch {
+      setError('Gagal menambahkan fasilitas.');
     }
   };
 
@@ -51,51 +59,65 @@ export default function FasilitasPage() {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchFacilities();
-    } catch (err) {
-      console.error('Gagal menghapus fasilitas');
+    } catch {
+      setError('Gagal menghapus fasilitas.');
     }
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Kelola Fasilitas Kos</h1>
+    <div className="min-h-screen flex flex-col items-center bg-gray-100 py-10 px-4 font-poppins">
+      <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
+        <h1 className="text-xl font-bold mb-4 text-center text-black">Kelola Fasilitas Kos</h1>
 
-      <div className="mb-6 bg-white p-4 rounded shadow-md max-w-md">
-        <h2 className="text-lg font-semibold mb-2">Tambah Fasilitas</h2>
-        <input
-          type="text"
-          placeholder="ID Kos"
-          value={kosId}
-          onChange={(e) => setKosId(e.target.value)}
-          className="w-full p-2 border mb-2"
-        />
-        <input
-          type="text"
-          placeholder="Nama Fasilitas"
-          value={newFacility}
-          onChange={(e) => setNewFacility(e.target.value)}
-          className="w-full p-2 border mb-2"
-        />
-        <button onClick={handleAdd} className="bg-green-500 text-white px-4 py-2 rounded">
-          Tambah
-        </button>
-      </div>
+        {error && <p className="text-red-500 mb-2 text-sm text-center">{error}</p>}
+        {success && <p className="text-green-500 mb-2 text-sm text-center">{success}</p>}
 
-      <div className="bg-white p-4 rounded shadow-md">
-        <h2 className="text-lg font-semibold mb-2">Daftar Fasilitas</h2>
-        <ul className="list-disc ml-6">
-          {facilities.map((fasilitas) => (
-            <li key={fasilitas.id} className="mb-2 flex justify-between items-center">
-              <span>{fasilitas.fasility} (Kos ID: {fasilitas.kos_id})</span>
-              <button
-                onClick={() => handleDelete(fasilitas.id)}
-                className="bg-red-500 text-white px-2 py-1 rounded"
-              >
-                Hapus
-              </button>
-            </li>
-          ))}
-        </ul>
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="ID Kos"
+            value={kosId}
+            onChange={(e) => setKosId(e.target.value)}
+            className="w-full p-2 border rounded mb-2 text-black"
+          />
+          <input
+            type="text"
+            placeholder="Nama Fasilitas"
+            value={newFacility}
+            onChange={(e) => setNewFacility(e.target.value)}
+            className="w-full p-2 border rounded mb-3 text-black"
+          />
+          <button
+            onClick={handleAdd}
+            className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition"
+          >
+            Tambah
+          </button>
+        </div>
+
+        <div>
+          <h2 className="text-lg font-semibold mb-2 border-b pb-1 text-black">Daftar Fasilitas</h2>
+          {facilities.length === 0 ? (
+            <p className="text-black text-sm">Belum ada fasilitas.</p>
+          ) : (
+            <ul className="divide-y">
+              {facilities.map((fasilitas) => (
+                <li key={fasilitas.id} className="py-2 flex justify-between items-center">
+                  <span className="text-black text-sm">
+                    {fasilitas.fasility}{' '}
+                    <span className="text-black/70">(ID: {fasilitas.kos_id})</span>
+                  </span>
+                  <button
+                    onClick={() => handleDelete(fasilitas.id)}
+                    className="text-red-500 text-sm hover:underline"
+                  >
+                    Hapus
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   );
