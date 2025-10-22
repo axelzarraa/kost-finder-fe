@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-    baseURL: process.env.PUBLIC_API_URL,
+    baseURL: process.env.PUBLIC_API_URL || 'https://learn.smktelkom-mlg.sch.id/kos/api',
     timeout: 10000,
     headers: {
         "Content-Type": "application/json",

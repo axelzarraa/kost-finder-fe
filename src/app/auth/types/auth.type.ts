@@ -15,8 +15,8 @@ export interface RegisterCredentials {
   name: string;
   email: string;
   password: string;
-  phone: string;
-  role: 'society' | 'owner';
+  phone: number;
+  role: "society" | "owner";
 }
 
 export interface RegisterResponse {
