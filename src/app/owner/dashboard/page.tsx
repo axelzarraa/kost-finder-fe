@@ -3,12 +3,13 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
+import { Home, BookOpen, Star, History } from 'lucide-react';
 
 export default function OwnerDashboard() {
   const [summary, setSummary] = useState({
     totalKos: 0,
     totalBooking: 0,
-    recentReviews: [],
+    recentReviews: [] as { comment: string }[],
   });
 
   useEffect(() => {
@@ -16,9 +17,7 @@ export default function OwnerDashboard() {
       try {
         const token = localStorage.getItem('token');
         const res = await axios.get('https://api-kamu.com/owner/summary', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         setSummary(res.data);
       } catch (err) {
@@ -29,49 +28,79 @@ export default function OwnerDashboard() {
   }, []);
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Dashboard Owner</h1>
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-indigo-100 to-indigo-200 p-6 md:p-10 font-[Poppins]">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <header className="text-center mb-10">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 drop-shadow-sm">
+            Dashboard Pemilik KostKu 
+          </h1>
+          <p className="text-gray-600 mt-2">Kelola kosmu dengan mudah dan nyaman</p>
+        </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white p-4 rounded shadow">
-          <h2 className="text-lg font-semibold">Total Kos</h2>
-          <p className="text-3xl">{summary.totalKos}</p>
-        </div>
-        <div className="bg-white p-4 rounded shadow">
-          <h2 className="text-lg font-semibold">Total Booking</h2>
-          <p className="text-3xl">{summary.totalBooking}</p>
-        </div>
-        <div className="bg-white p-4 rounded shadow">
-          <h2 className="text-lg font-semibold">Review Terbaru</h2>
-          <ul className="mt-2 list-disc ml-4">
-            {summary.recentReviews.map((review: any, i: number) => (
-              <li key={i}>{review.comment}</li>
-            ))}
-          </ul>
-        </div>
-      </div>
+        {/* Summary Cards */}
+        <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12">
+          <div className="bg-white/70 backdrop-blur-lg p-6 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300">
+            <h2 className="text-gray-600 font-semibold mb-2">Total Kos</h2>
+            <p className="text-5xl font-bold text-blue-600">{summary.totalKos}</p>
+          </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Link href="/owner/kos">
-          <div className="bg-blue-500 text-white p-4 rounded text-center hover:bg-blue-600">
-            Kelola Kamar Kos
+          <div className="bg-white/70 backdrop-blur-lg p-6 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300">
+            <h2 className="text-gray-600 font-semibold mb-2">Total Booking</h2>
+            <p className="text-5xl font-bold text-green-600">{summary.totalBooking}</p>
           </div>
-        </Link>
-        <Link href="/owner/fasilitas">
-          <div className="bg-green-500 text-white p-4 rounded text-center hover:bg-green-600">
-            Kelola Fasilitas
+
+          <div className="bg-white/70 backdrop-blur-lg p-6 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300">
+            <h2 className="text-gray-600 font-semibold mb-3">Review Terbaru</h2>
+            <ul className="space-y-2 max-h-32 overflow-y-auto text-gray-700 text-sm pr-2">
+              {summary.recentReviews.length > 0 ? (
+                summary.recentReviews.map((review, i) => (
+                  <li key={i} className="bg-gray-100/80 rounded-md p-2 hover:bg-gray-200 transition">
+                    {review.comment}
+                  </li>
+                ))
+              ) : (
+                <p className="text-gray-400 italic">Belum ada review</p>
+              )}
+            </ul>
           </div>
-        </Link>
-        <Link href="/owner/reviews">
-          <div className="bg-yellow-500 text-white p-4 rounded text-center hover:bg-yellow-600">
-            Balas Review
-          </div>
-        </Link>
-        <Link href="/owner/transaksi">
-          <div className="bg-purple-500 text-white p-4 rounded text-center hover:bg-purple-600">
-            Histori Transaksi
-          </div>
-        </Link>
+        </section>
+
+        {/* Navigation Cards */}
+        <section className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <Link href="/owner/kos">
+            <div className="group bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-6 rounded-2xl shadow-md text-center hover:scale-105 hover:shadow-xl transition duration-300 cursor-pointer">
+              <Home className="w-8 h-8 mx-auto mb-3 group-hover:animate-pulse" />
+              <p className="font-semibold">Kelola Kamar Kos</p>
+            </div>
+          </Link>
+
+          <Link href="/owner/fasilitas">
+            <div className="group bg-gradient-to-br from-green-500 to-emerald-600 text-white p-6 rounded-2xl shadow-md text-center hover:scale-105 hover:shadow-xl transition duration-300 cursor-pointer">
+              <BookOpen className="w-8 h-8 mx-auto mb-3 group-hover:animate-pulse" />
+              <p className="font-semibold">Kelola Fasilitas</p>
+            </div>
+          </Link>
+
+          <Link href="/owner/reviews">
+            <div className="group bg-gradient-to-br from-yellow-400 to-orange-500 text-white p-6 rounded-2xl shadow-md text-center hover:scale-105 hover:shadow-xl transition duration-300 cursor-pointer">
+              <Star className="w-8 h-8 mx-auto mb-3 group-hover:animate-pulse" />
+              <p className="font-semibold">Balas Review</p>
+            </div>
+          </Link>
+
+          <Link href="/owner/transaksi">
+            <div className="group bg-gradient-to-br from-purple-500 to-indigo-600 text-white p-6 rounded-2xl shadow-md text-center hover:scale-105 hover:shadow-xl transition duration-300 cursor-pointer">
+              <History className="w-8 h-8 mx-auto mb-3 group-hover:animate-pulse" />
+              <p className="font-semibold">Histori Transaksi</p>
+            </div>
+          </Link>
+        </section>
+
+        {/* Footer */}
+        <footer className="text-center text-gray-500 text-sm mt-16">
+          © {new Date().getFullYear()} <span className="font-medium text-gray-700">KostKu</span> Owner Dashboard — All rights reserved.
+        </footer>
       </div>
     </div>
   );

@@ -20,7 +20,7 @@ const RegisterForm = () => {
         try {
             await registerMutation.mutateAsync(data);
             showSuccess('Registration successful! Please login.');
-            router.push('/login');
+            router.push('/auth/login');
         } catch (error) {
             console.error('Registration failed:', error);
             showError('Registration failed. Please try again.');
